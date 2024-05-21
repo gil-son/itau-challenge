@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-public class ContaTransacao {
+public class ContaTransacaoDTO {
 
     private String idOrigem;
     private String idDestino;
