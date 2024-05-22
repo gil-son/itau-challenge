@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.ConnectException;
+
 @RestController
 @RequestMapping(value = "/transferencia")
 public class TransferenciaController {
@@ -26,7 +29,8 @@ public class TransferenciaController {
     private NotificacaoService notificacaoService;
 
     @PostMapping
-    public ResponseEntity<?> realizarTransferencia(@RequestBody TransferenciaRequestDTO transferenciaRequestDTO) {
+    public ResponseEntity<?> realizarTransferencia(@RequestBody TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
+
 
         logger.info("TransferenciaController - realizarTransferencia - DTO: {}", transferenciaRequestDTO);
         // Validar a transferência

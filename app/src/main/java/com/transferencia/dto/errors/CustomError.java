@@ -1,4 +1,4 @@
-package com.transferencia.dto;
+package com.transferencia.dto.errors;
 
 import java.time.Instant;
 

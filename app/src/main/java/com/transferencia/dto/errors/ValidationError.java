@@ -1,4 +1,7 @@
-package com.transferencia.dto;
+package com.transferencia.dto.errors;
+
+import com.transferencia.dto.errors.CustomError;
+import com.transferencia.dto.errors.FieldMessage;
 
 import java.time.Instant;
 import java.util.ArrayList;
