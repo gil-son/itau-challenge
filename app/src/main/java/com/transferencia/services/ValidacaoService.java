@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import com.transferencia.services.exceptions.BusinessException;
+
+import java.net.ConnectException;
 
 @Service
 public class ValidacaoService {
@@ -19,21 +22,12 @@ public class ValidacaoService {
     @Autowired
     private ContaService contaService;
 
-    public String validarTransferencia(TransferenciaRequestDTO transferenciaRequestDTO) {
+    public String validarTransferencia(TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
 
         logger.info("ValidacaoService - validarTransferencia -  transferenciaRequestDTO: {}", transferenciaRequestDTO);
 
-        try{
             // Validar se o cliente que vai receber a transferência existe
-            boolean clienteExiste = clienteService.validarCliente(transferenciaRequestDTO.getIdCliente());
-            if (!clienteExiste) {
-                return "Cliente destinatário não encontrado.";
-            }
-
-        }catch (HttpClientErrorException e){
-            logger.error("Erro ao buscar dados da conta origem: {}", e.getMessage());
-            return "Erro ao buscar dados do cliente.";
-        }
+        clienteService.validarCliente(transferenciaRequestDTO.getIdCliente());
 
         logger.info("validarTransferencia -  transferenciaRequestDTO - getIdOrigem : {}", transferenciaRequestDTO.getConta().getIdOrigem());
 
@@ -43,22 +37,24 @@ public class ValidacaoService {
             logger.info("validarTransferencia -  transferenciaRequestDTO - contaOrigem.isAtiva : {}", contaOrigem.getAtivo());
 
             if (contaOrigem == null || !contaOrigem.getAtivo()) {
-                return "Conta origem inválida ou inativa.";
+                throw new BusinessException("Conta origem inválida ou inativa");
             }
 
             // Validar saldo disponível
             if (contaOrigem.getSaldo() < transferenciaRequestDTO.getValor()) {
-                return "Saldo insuficiente.";
+                throw new BusinessException("Saldo insuficiente");
             }
 
             // Validar limite diário
             if (contaOrigem.getLimiteDiario() < transferenciaRequestDTO.getValor()) {
-                return "Limite diário excedido.";
+                throw new BusinessException("Limite diário excedido");
             }
 
         }catch (HttpClientErrorException e){
             logger.error("Erro ao buscar dados da conta origem: {}", e.getMessage());
-            return "Erro ao buscar dados da conta origem.";
+            throw new BusinessException( "Erro ao buscar dados da conta origem.");
+        } catch (ConnectException e) {
+            throw new RuntimeException(e);
         }
 
         return null;

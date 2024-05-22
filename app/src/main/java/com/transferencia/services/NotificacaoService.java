@@ -1,12 +1,15 @@
 package com.transferencia.services;
 
 import com.transferencia.dto.TransferenciaRequestDTO;
+import com.transferencia.services.exceptions.NotificacaoBacenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.net.ConnectException;
 
 @Service
 public class NotificacaoService {
@@ -16,7 +19,7 @@ public class NotificacaoService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public boolean notificarBacen(TransferenciaRequestDTO transferenciaRequestDTO) {
+    public boolean notificarBacen(TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
 
         logger.info("NotificacaoService - notificarBacen - transferenciaRequestDTO: {}", transferenciaRequestDTO);
 
@@ -25,7 +28,9 @@ public class NotificacaoService {
             restTemplate.postForEntity(url, transferenciaRequestDTO, Void.class);
             return true;
         } catch (HttpClientErrorException.TooManyRequests e) {
-            return false;
+            throw new NotificacaoBacenException("Falaha ao se comunicar com o BASEN");
+        } catch (Exception e) {
+            throw new ConnectException("Conexão recusada - A Transação será armazenada e tentaremos automaticamente em breve. Você será notificado.");
         }
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.net.ConnectException;
 import java.util.UUID;
 
 @Service
@@ -27,7 +28,7 @@ public class TransferenciaService {
     @Autowired
     private TransferenciaRepository transferenciaRepository;
 
-    public String realizarTransferencia(TransferenciaRequestDTO transferenciaRequestDTO) {
+    public String realizarTransferencia(TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
 
         logger.info("TransferenciaService - realizarTransferencia - DTO: {}", transferenciaRequestDTO);
 
