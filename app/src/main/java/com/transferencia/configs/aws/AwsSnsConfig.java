@@ -18,8 +18,8 @@ public class AwsSnsConfig {
     private String accessKeyId;
     @Value("${aws.secretKey}")
     private String secretKey;
-    @Value("${aws.sns.topic.catalog.arn}")
-    private String catalogTopicArn;
+    @Value("${aws.sns.topic.arn}")
+    private String transacaoFalhaTopicArn;
 
     @Bean
     public AmazonSNS amazonSNSBuilder(){
@@ -32,9 +32,9 @@ public class AwsSnsConfig {
                 .build();
     }
 
-    @Bean(name = "catalogEventsTopic")
-    public Topic snsCatalogTopicBuilder(){
-        return new Topic().withTopicArn(catalogTopicArn);
+    @Bean(name = "transacaoFalhaTopic")
+    public Topic snsTransacaoFalhaTopicTopicBuilder(){
+        return new Topic().withTopicArn(transacaoFalhaTopicArn);
     }
 
 }
