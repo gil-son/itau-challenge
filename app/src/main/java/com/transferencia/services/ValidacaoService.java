@@ -26,8 +26,8 @@ public class ValidacaoService {
 
         logger.info("ValidacaoService - validarTransferencia -  transferenciaRequestDTO: {}", transferenciaRequestDTO);
 
-            // Validar se o cliente que vai receber a transferência existe
-        clienteService.validarCliente(transferenciaRequestDTO.getIdCliente());
+        // Validar se o cliente que vai receber a transferência existe
+        clienteService.validarCliente(transferenciaRequestDTO);
 
         logger.info("validarTransferencia -  transferenciaRequestDTO - getIdOrigem : {}", transferenciaRequestDTO.getConta().getIdOrigem());
 

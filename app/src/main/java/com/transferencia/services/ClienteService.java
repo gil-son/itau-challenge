@@ -1,6 +1,10 @@
 package com.transferencia.services;
 
 
+import com.amazonaws.services.sns.model.InvalidParameterException;
+import com.transferencia.dto.TransferenciaRequestDTO;
+import com.transferencia.services.aws.AwsSnsService;
+import com.transferencia.services.aws.MessageDTO;
 import com.transferencia.services.exceptions.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +23,37 @@ public class ClienteService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public void validarCliente(String idCliente) throws ConnectException {
+    @Autowired
+    private AwsSnsService snsService;
 
-        logger.info("ClienteService - validarCliente - idCliente: {}", idCliente);
+    public void validarCliente(TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
 
-        if (idCliente == null) {
+        logger.info("ClienteService - validarCliente - idCliente: {}", transferenciaRequestDTO.getIdCliente());
+
+        if (transferenciaRequestDTO.getIdCliente() == null) {
             logger.error("ID do cliente é nulo ao validar o cliente");
             throw new BusinessException("ID do cliente é nulo");
         }
 
-        String url = "http://localhost:9090/clientes/" + idCliente;
+        String url = "http://localhost:9090/clientes/" + transferenciaRequestDTO.getIdCliente();
 
         try {
-            logger.info("Validando cliente com ID: {}", idCliente);
+            logger.info("Validando cliente com ID: {}", transferenciaRequestDTO.getIdCliente());
             restTemplate.getForObject(url, Void.class);
         } catch (HttpClientErrorException.NotFound e) {
-            logger.error("Cliente com ID {} não encontrado", idCliente);
-            throw new BusinessException("Cliente com ID {"+idCliente.toString()+"} não encontrado");
+            logger.error("Cliente com ID {} não encontrado", transferenciaRequestDTO.getIdCliente());
+            throw new BusinessException("Cliente com ID {"+transferenciaRequestDTO.getIdCliente().toString()+"} não encontrado");
         } catch (Exception e) {
-            logger.error("Erro ao validar cliente com ID {}: {}", idCliente, e.getMessage(), e.getCause());
+            logger.error("Erro ao validar cliente com ID {}: {}", transferenciaRequestDTO.getIdCliente(), e.getMessage(), e.getCause());
+
+            try{
+                this.snsService.publish(new MessageDTO("test"));
+            }catch (Exception ex){
+                throw ex;
+            }
+
+
+
             throw new ConnectException("Conexão recusada - A Transação será armazenada e tentaremos automaticamente em breve. Você será notificado.");
         }
     }
