@@ -46,7 +46,7 @@ public class TranferenciaControllerExceptionHandler {
 
         return ResponseEntity.status(status).body(err);
     }
-    
+
     @ExceptionHandler(InvalidParameterException.class)
     public ResponseEntity<CustomError> handleNotificacaoBacenException(InvalidParameterException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
