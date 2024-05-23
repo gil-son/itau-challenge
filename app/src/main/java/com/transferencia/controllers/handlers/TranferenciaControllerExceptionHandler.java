@@ -1,5 +1,6 @@
 package com.transferencia.controllers.handlers;
 
+import com.amazonaws.services.sns.model.InvalidParameterException;
 import com.transferencia.dto.errors.CustomError;
 import com.transferencia.dto.errors.ValidationError;
 import com.transferencia.services.exceptions.BusinessException;
@@ -42,6 +43,16 @@ public class TranferenciaControllerExceptionHandler {
         ValidationError err = new ValidationError(Instant.now(), status.value(), "Falhar ao conectar!", request.getRequestURI());
 
         err.addError("Ocorreu uma falha ao conectar com o Basen", e.getMessage());
+
+        return ResponseEntity.status(status).body(err);
+    }
+    
+    @ExceptionHandler(InvalidParameterException.class)
+    public ResponseEntity<CustomError> handleNotificacaoBacenException(InvalidParameterException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        ValidationError err = new ValidationError(Instant.now(), status.value(), "Falha ao se comunicar com o SNS!", request.getRequestURI());
+
+        err.addError("Falha ao enviar a transacao para o SNS", e.getMessage());
 
         return ResponseEntity.status(status).body(err);
     }
