@@ -2,6 +2,7 @@ package com.transferencia.controllers;
 
 import com.transferencia.dto.TransferenciaResponseDTO;
 import com.transferencia.services.aws.AwsSnsService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.transferencia.dto.TransferenciaRequestDTO;
@@ -33,8 +34,7 @@ public class TransferenciaController {
     private AwsSnsService snsService;
 
     @PostMapping
-    public ResponseEntity<?> realizarTransferencia(@RequestBody TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
-
+    public ResponseEntity<?> realizarTransferencia(@Valid @RequestBody TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
 
         logger.info("TransferenciaController - realizarTransferencia - DTO: {}", transferenciaRequestDTO);
         // Validar a transferência
