@@ -18,8 +18,11 @@ public class AwsSnsConfig {
     private String accessKeyId;
     @Value("${aws.secretKey}")
     private String secretKey;
-    @Value("${aws.sns.topic.arn}")
-    private String transacaoFalhaTopicArn;
+    @Value("${aws.sns.transferencia.topic.arn}")
+    private String transferenciaFalhaTopicArn;
+
+    @Value("${aws.sns.basen.topic.arn}")
+    private String basenFalhaTopicArn;
 
     @Bean
     public AmazonSNS amazonSNSBuilder(){
@@ -32,9 +35,14 @@ public class AwsSnsConfig {
                 .build();
     }
 
-    @Bean(name = "transacaoFalhaTopic")
-    public Topic snsTransacaoFalhaTopicTopicBuilder(){
-        return new Topic().withTopicArn(transacaoFalhaTopicArn);
+    @Bean(name = "transferenciaFalhaTopic")
+    public Topic snsTransferenciaFalhaTopicBuilder() {
+        return new Topic().withTopicArn(transferenciaFalhaTopicArn);
+    }
+
+    @Bean(name = "basenFalhaTopic")
+    public Topic snsBasenFalhaTopicBuilder() {
+        return new Topic().withTopicArn(basenFalhaTopicArn);
     }
 
 }
