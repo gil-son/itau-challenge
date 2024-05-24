@@ -1,9 +1,12 @@
 package com.transferencia.dto;
 
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+
 import org.json.JSONObject;
 
 @Setter
@@ -11,8 +14,14 @@ import org.json.JSONObject;
 @NoArgsConstructor
 public class TransferenciaRequestDTO {
 
+    @NotNull(message = "O id do cliente é requirido!")
+    @NotBlank(message = "O id do cliente é requirido!")
     private String idCliente;
+
+    @Positive(message = "O valor deve de transferência deve ser maior que zero")
     private Double valor;
+
+    @NotNull(message = "Os dados das contas são requirídos!")
     private ContaTransacaoDTO conta;
 
     @Override
