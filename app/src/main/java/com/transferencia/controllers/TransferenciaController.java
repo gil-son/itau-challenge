@@ -1,6 +1,7 @@
 package com.transferencia.controllers;
 
 import com.transferencia.dto.TransferenciaResponseDTO;
+import com.transferencia.services.aws.AwsSnsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.transferencia.dto.TransferenciaRequestDTO;
@@ -28,6 +29,9 @@ public class TransferenciaController {
     @Autowired
     private NotificacaoService notificacaoService;
 
+    @Autowired
+    private AwsSnsService snsService;
+
     @PostMapping
     public ResponseEntity<?> realizarTransferencia(@RequestBody TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
 
@@ -43,10 +47,7 @@ public class TransferenciaController {
         String idTransferencia = transferenciaService.realizarTransferencia(transferenciaRequestDTO);
 
         // Notificar o BACEN
-        boolean sucesso = notificacaoService.notificarBacen(transferenciaRequestDTO);
-        if (!sucesso) {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("Falha ao notificar o BACEN - Esse dado será armazenado em fila");
-        }
+        notificacaoService.notificarBacen(transferenciaRequestDTO);
 
         // Criar o objeto de resposta
         TransferenciaResponseDTO responseDTO = new TransferenciaResponseDTO(idTransferencia);
