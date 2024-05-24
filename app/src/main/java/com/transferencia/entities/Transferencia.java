@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 @Setter
 @Getter
@@ -23,4 +25,5 @@ public class Transferencia implements Serializable {
     private Double valor;
     private String idOrigem;
     private String idDestino;
+    private Timestamp dataTempoTransferencia;
 }
