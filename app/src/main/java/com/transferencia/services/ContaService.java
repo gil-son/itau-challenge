@@ -39,7 +39,7 @@ public class ContaService {
             logger.error("Erro ao validar cliente com ID {}: {}", transferenciaRequestDTO.getConta().getIdOrigem(), e.getMessage(), e.getCause());
 
             try{
-                this.snsService.publish(new MessageDTO(transferenciaRequestDTO.toString()));
+                this.snsService.publicaTransferenciaFalhaTopic(transferenciaRequestDTO.toString());
             }catch (Exception ex){
                 throw ex;
             }

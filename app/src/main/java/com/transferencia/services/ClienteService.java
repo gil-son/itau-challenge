@@ -47,8 +47,8 @@ public class ClienteService {
             logger.error("Erro ao validar cliente com ID {}: {}", transferenciaRequestDTO.getIdCliente(), e.getMessage(), e.getCause());
 
             try{
-                this.snsService.publish(new MessageDTO(transferenciaRequestDTO.toString()));
-            }catch (Exception ex){
+                this.snsService.publicaTransferenciaFalhaTopic(transferenciaRequestDTO.toString()); // ou publishToBasenFalhaTopic, dependendo do seu caso
+            } catch (Exception ex){
                 throw ex;
             }
 

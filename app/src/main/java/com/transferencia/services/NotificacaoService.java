@@ -1,6 +1,7 @@
 package com.transferencia.services;
 
 import com.transferencia.dto.TransferenciaRequestDTO;
+import com.transferencia.services.aws.AwsSnsService;
 import com.transferencia.services.exceptions.NotificacaoBacenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,9 @@ public class NotificacaoService {
     private static final Logger logger = LoggerFactory.getLogger(NotificacaoService.class);
 
     @Autowired
+    private AwsSnsService snsService;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     public boolean notificarBacen(TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
@@ -28,9 +32,15 @@ public class NotificacaoService {
             restTemplate.postForEntity(url, transferenciaRequestDTO, Void.class);
             return true;
         } catch (HttpClientErrorException.TooManyRequests e) {
-            throw new NotificacaoBacenException("Falha ao se comunicar com o BASEN");
+
+            this.snsService.publishToBasenFalhaTopic(transferenciaRequestDTO.toString());
+
+            throw new NotificacaoBacenException("Falha ao se comunicar com o BASEN - A Transação foi processada. Em breve quando o BASEN estiver disponível, receberá o registro.");
         } catch (Exception e) {
-            throw new ConnectException("Conexão recusada - A Transação foi processada. Em breve quando o portal BASEN estiver disponível, receberá o registro.");
+
+            this.snsService.publishToBasenFalhaTopic(transferenciaRequestDTO.toString());
+
+            throw new ConnectException("Conexão recusada - A Transação foi processada. Em breve quando o BASEN estiver disponível, receberá o registro.");
         }
     }
 }

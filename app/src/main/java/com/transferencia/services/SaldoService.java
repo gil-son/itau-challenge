@@ -31,7 +31,7 @@ public class SaldoService {
         } catch (HttpClientErrorException e) {
 
             try{
-                this.snsService.publish(new MessageDTO(transferenciaRequestDTO.toString()));
+                this.snsService.publicaTransferenciaFalhaTopic(transferenciaRequestDTO.toString());
             }catch (Exception ex){
                 throw ex;
             }
