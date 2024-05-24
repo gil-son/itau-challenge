@@ -9,9 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.sql.Timestamp;
 
 import java.net.ConnectException;
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -33,7 +34,7 @@ public class TransferenciaService {
         logger.info("TransferenciaService - realizarTransferencia - DTO: {}", transferenciaRequestDTO);
 
         // Buscar dados da conta origem
-        ContaDTO contaOrigem = contaService.buscarConta(transferenciaRequestDTO.getConta().getIdOrigem());
+        ContaDTO contaOrigem = contaService.buscarConta(transferenciaRequestDTO);
 
         // Atualizar saldo da conta origem
         contaOrigem.setSaldo(contaOrigem.getSaldo() - transferenciaRequestDTO.getValor());
@@ -56,6 +57,7 @@ public class TransferenciaService {
         entity.setValor(dto.getValor());
         entity.setIdOrigem(dto.getConta().getIdOrigem());
         entity.setIdDestino(dto.getConta().getIdDestino());
+        entity.setDataTempoTransferencia(new Timestamp(System.currentTimeMillis()));
 
     }
 }

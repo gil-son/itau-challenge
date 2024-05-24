@@ -33,7 +33,7 @@ public class ValidacaoService {
 
         // Buscar dados da conta origem
         try{
-            ContaDTO contaOrigem = contaService.buscarConta(transferenciaRequestDTO.getConta().getIdOrigem());
+            ContaDTO contaOrigem = contaService.buscarConta(transferenciaRequestDTO);
             logger.info("validarTransferencia -  transferenciaRequestDTO - contaOrigem.isAtiva : {}", contaOrigem.getAtivo());
 
             if (contaOrigem == null || !contaOrigem.getAtivo()) {

@@ -28,9 +28,9 @@ public class NotificacaoService {
             restTemplate.postForEntity(url, transferenciaRequestDTO, Void.class);
             return true;
         } catch (HttpClientErrorException.TooManyRequests e) {
-            throw new NotificacaoBacenException("Falaha ao se comunicar com o BASEN");
+            throw new NotificacaoBacenException("Falha ao se comunicar com o BASEN");
         } catch (Exception e) {
-            throw new ConnectException("Conexão recusada - A Transação será armazenada e tentaremos automaticamente em breve. Você será notificado.");
+            throw new ConnectException("Conexão recusada - A Transação foi processada. Em breve quando o portal BASEN estiver disponível, receberá o registro.");
         }
     }
 }
