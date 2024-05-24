@@ -47,12 +47,10 @@ public class ClienteService {
             logger.error("Erro ao validar cliente com ID {}: {}", transferenciaRequestDTO.getIdCliente(), e.getMessage(), e.getCause());
 
             try{
-                this.snsService.publish(new MessageDTO("test"));
+                this.snsService.publish(new MessageDTO(transferenciaRequestDTO.toString()));
             }catch (Exception ex){
                 throw ex;
             }
-
-
 
             throw new ConnectException("Conexão recusada - A Transação será armazenada e tentaremos automaticamente em breve. Você será notificado.");
         }

@@ -1,6 +1,9 @@
 package com.transferencia.services;
 
 import com.transferencia.dto.ContaDTO;
+import com.transferencia.dto.TransferenciaRequestDTO;
+import com.transferencia.services.aws.AwsSnsService;
+import com.transferencia.services.aws.MessageDTO;
 import com.transferencia.services.exceptions.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,20 +20,30 @@ public class ContaService {
     private static final Logger logger = LoggerFactory.getLogger(ContaService.class);
 
     @Autowired
+    private AwsSnsService snsService;
+
+    @Autowired
     private RestTemplate restTemplate;
 
-    public ContaDTO buscarConta(String idConta) throws ConnectException {
+    public ContaDTO buscarConta(TransferenciaRequestDTO transferenciaRequestDTO) throws ConnectException {
 
-        logger.info("ContaService - buscarConta - idConta: {}", idConta);
+        logger.info("ContaService - buscarConta - idConta: {}", transferenciaRequestDTO.getConta().getIdOrigem());
 
         try {
-            String url = "http://localhost:9090/contas/" + idConta;
+            String url = "http://localhost:9090/contas/" + transferenciaRequestDTO.getConta().getIdOrigem();
             return restTemplate.getForObject(url, ContaDTO.class);
         } catch (HttpClientErrorException.NotFound e) {
-            logger.error("Conta origem com ID {} não encontrada", idConta);
-            throw new BusinessException("Conta origem com ID {"+idConta.toString()+"} não encontrada");
+            logger.error("Conta origem com ID {} não encontrada", transferenciaRequestDTO.getConta().getIdOrigem());
+            throw new BusinessException("Conta origem com ID {"+transferenciaRequestDTO.getConta().getIdOrigem().toString()+"} não encontrada");
         } catch (Exception e) {
-            logger.error("Erro ao validar cliente com ID {}: {}", idConta, e.getMessage(), e.getCause());
+            logger.error("Erro ao validar cliente com ID {}: {}", transferenciaRequestDTO.getConta().getIdOrigem(), e.getMessage(), e.getCause());
+
+            try{
+                this.snsService.publish(new MessageDTO(transferenciaRequestDTO.toString()));
+            }catch (Exception ex){
+                throw ex;
+            }
+
             throw new ConnectException("Conexão recusada - A Transação será armazenada e tentaremos automaticamente em breve. Você será notificado.");
         }
 

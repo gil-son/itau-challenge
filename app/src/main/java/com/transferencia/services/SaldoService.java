@@ -1,6 +1,8 @@
 package com.transferencia.services;
 
 import com.transferencia.dto.TransferenciaRequestDTO;
+import com.transferencia.services.aws.AwsSnsService;
+import com.transferencia.services.aws.MessageDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ public class SaldoService {
     private static final Logger logger = LoggerFactory.getLogger(SaldoService.class);
 
     @Autowired
+    private AwsSnsService snsService;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     public void atualizarSaldos(TransferenciaRequestDTO transferenciaRequestDTO) {
@@ -24,8 +29,14 @@ public class SaldoService {
         try {
             restTemplate.put(url, transferenciaRequestDTO, Void.class);
         } catch (HttpClientErrorException e) {
-            // Log de erro ou tratamento adicional, se necessário
-            throw new RuntimeException("Erro ao atualizar os saldos das contas", e);
+
+            try{
+                this.snsService.publish(new MessageDTO(transferenciaRequestDTO.toString()));
+            }catch (Exception ex){
+                throw ex;
+            }
+
+            throw new RuntimeException("Erro ao atualizar os saldos das contas. A transação será retomada em breve. Não teve desconto de saldo da conta de origem por hora", e);
         }
     }
 }
