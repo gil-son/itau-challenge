@@ -1,6 +1,5 @@
 # itau-challenge
 
-
 ## Desafio
 
 ## Sumário
@@ -83,6 +82,12 @@
   </details>
 
   <details>
-    <summary>Diagrama com recursos e resolução</summary>
-    
+    <summary><h3>Diagrama com recursos e resolução</h3></summary>
+      <p>Abaixo, é possível ver o diagrama descrito em <b>Escolhas dos recursos e resolução:</b></p>
+      <div align="center">
+        <img src="https://thumbs2.imgbox.com/b2/d7/Ma9HCam1_t.png">
+      </div>
+      <p>Caso deseje, é possível obter o arquivo do diagrama acessando <a href="">aqui</a>.</p>
+      <p>(Visualize o diagrama utilizando a ferramenta <a href="https://draw.io">draw.io</a>)</p>
+
   </details>  
