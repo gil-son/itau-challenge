@@ -87,7 +87,7 @@
       <div align="center">
         <img src="https://thumbs2.imgbox.com/b2/d7/Ma9HCam1_t.png">
       </div>
-      <p>Caso deseje, é possível obter o arquivo do diagrama acessando <a href="">aqui</a>.</p>
+      <p>Caso deseje, é possível obter o arquivo do diagrama acessando <a href="https://github.com/gil-son/itau-challenge/tree/main/utils">aqui</a>.</p>
       <p>(Visualize o diagrama utilizando a ferramenta <a href="https://draw.io">draw.io</a>)</p>
 
   </details>  
