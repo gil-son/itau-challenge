@@ -61,7 +61,7 @@
 
    <details>
     <summary><h4>Passo 1: Preparação do Ambiente - AWS</h4> </summary>   
-    <p>Caso você deseje ver o funcionamento do SNS e do SQS, é bacana ter essas configurações. Caso não, o projeto vai funcionar da mesma forma. Bom acesse a AWS:</p>
+    <p>Caso você deseje ver o funcionamento do SNS e do SQS, é bacana ter essas configurações. Caso não, o projeto vai funcionar, mas com limitações nos tratamentos de erros. Bom acesse a AWS:</p>
     <ol>
       <li>Dentro do contexto do projeto, é necessário a criação de um usuário para acessar os recursos da AWS. Caso não tenha uma conta na AWS, crie uma conta e configure um usuário administrativo e o modo de acesso 2FA. Veja o vídeo para mais detalhes: <a href="https://www.youtube.com/watch?v=7hcxNAwfhhw">assistir</a> </li>
       <li>Acesse o IAM - > Users -> Create user e escolha um nome</li>
@@ -232,7 +232,298 @@ ARN_FROM_SNS_BASEN= valor
   </li>
 </ol>
   </details>
+ 
 </details>
+
+ <details>
+  <summary><h3>Instruções de execução dos cenários</h3></summary>
+    <p>Após as <b>Instruções de configurações</b> o projeto estará apto a executar. Caso não fez as etapas <b>Preparação do Ambiente - AWS</b> o projeto vai excutar, mas em cenários de falhas de conexão não vão funcionar de forma adequada com a mensagem de erro tratada. Caso configurou poderá visualizar o response body e consultar na AWS</p>
+    <p>Acesse o postman ou isnomnia e configure a seguinte requisição</p>
+
+  POST - Criação de uma transferência de sucesso
+
+  http://localhost:8080/transferencia
+
+  + Request (application/json)
+
+    + Body
+
+            {
+              "idCliente": "2ceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
+              "valor": 10.00,
+              "conta": {
+                  "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
+                  "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
+                    }
+            }
+
+    + Response 201:
+      
+            {
+              "id_transferencia": "7c1b4c44-bd13-4789-84cc-63b5ce330f9e"
+            }
+  
+    (application/json)
+
+    <hr/>
+
+    POST - Cliente destinatário não encontrado
+
+  http://localhost:8080/transferencia
+
+  + Request (application/json)
+
+    + Body
+
+            {
+              "idCliente": "xceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
+              "valor": 10.00,
+              "conta": {
+                  "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
+                  "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
+                    }
+            }
+
+    + Response 500:
+      
+          {
+            "timestamp": "2024-05-27T19:33:30.699699171Z",
+            "status": 500,
+            "error": "Dado inválido!",
+            "path": "/transferencia",
+            "errors": [
+              {
+                  "fieldName": "Regras de negócio",
+                  "message": "Cliente com ID {xceb26e9-7b5c-417e-bf75-ffaa66e3a76f} não encontrado"
+              }
+            ]
+          }
+  
+    (application/json)
+
+<hr/>
+
+    POST - Erro ao buscar dados da conta origem
+
+  http://localhost:8080/transferencia
+
+  + Request (application/json)
+
+    + Body
+
+            {
+            "idCliente": "bcdd1048-a501-4608-bc82-66d7b4db3600",
+            "valor": 1000.00,
+            "conta": {
+                "idOrigem": "x0d32142-74b7-4aca-9c68-838aeacef96b",
+                "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
+              }
+           }
+
+    + Response 500:
+      
+          {
+            "timestamp": "2024-05-27T19:33:30.699699171Z",
+            "status": 500,
+            "error": "Dado inválido!",
+            "path": "/transferencia",
+            "errors": [
+              {
+                  "fieldName": "Regras de negócio",
+                  "message": "Cliente com ID {xceb26e9-7b5c-417e-bf75-ffaa66e3a76f} não encontrado"
+              }
+            ]
+          }
+  
+    (application/json)
+
+<hr/>
+
+  POST - Limite diário excedido
+
+  http://localhost:8080/transferencia
+
+  + Request (application/json)
+
+    + Body
+
+            {
+          "idCliente": "2ceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
+          "valor": 1000.00,
+          "conta": {
+              "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
+              "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
+            }
+          }
+
+    + Response 500:
+      
+            {
+            "timestamp": "2024-05-27T19:37:48.935589971Z",
+            "status": 500,
+            "error": "Dado inválido!",
+            "path": "/transferencia",
+            "errors": [
+                {
+                    "fieldName": "Regras de negócio",
+                    "message": "Limite diário excedido"
+                }
+            ]
+          }
+  
+    (application/json)
+
+<hr/>
+
+  POST - Saldo insuficiente
+
+  http://localhost:8080/transferencia
+
+  + Request (application/json)
+
+    + Body
+
+           {
+            "idCliente": "2ceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
+            "valor": 6000.00,
+            "conta": {
+                "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
+                "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
+            }
+          }
+
+    + Response 500:
+      
+            {
+              "timestamp": "2024-05-27T19:40:43.550765760Z",
+              "status": 500,
+              "error": "Dado inválido!",
+              "path": "/transferencia",
+              "errors": [
+                  {
+                      "fieldName": "Regras de negócio",
+                      "message": "Saldo insuficiente"
+                  }
+              ]
+            }
+  
+    (application/json)
+    
+
+<hr/>
+
+  <p>Para provocar as falhas de conexão com as API de Cadastro ou Contas, você pode optar por mudar o path de cada API em wiremock/mappings e para cada arquivo, mude o endpoint da API de Cadastro ou a API de Contas:</p>
+
+  POST - Falhar ao conectar!
+
+  http://localhost:8080/transferencia
+
+  + Request (application/json)
+
+    + Body
+
+               {
+              "idCliente": "xceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
+              "valor": 1000.00,
+              "conta": {
+                  "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
+                  "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
+            }
+          }
+
+    + Response 500:
+      
+            {
+              "timestamp": "2024-05-27T19:49:45.560288358Z",
+              "status": 500,
+              "error": "Falhar ao conectar!",
+              "path": "/transferencia",
+              "errors": [
+                  {
+                      "fieldName": "Ocorreu uma falha ao conectar com a API externa",
+                      "message": "Conexão recusada - A Transação será armazenada e tentaremos automaticamente em breve. Você será notificado."
+                  }
+              ]
+           }
+  
+    (application/json)
+
+<hr/>
+
+  <p>Para provocar as falhas de conexão com a API do Basem, você pode optar por mudar o path de cada API em wiremock/mappings alterar o endpoint que chama o base:</p>
+
+  POST - Falhar ao conectar - Basen!
+
+  http://localhost:8080/transferencia
+
+  + Request (application/json)
+
+    + Body
+
+              {
+                "idCliente": "2ceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
+                "valor": 300.00,
+                "conta": {
+                    "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
+                    "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
+                }
+            }
+
+    + Response 500:
+      
+            {
+              "timestamp": "2024-05-27T19:56:30.871882738Z",
+              "status": 500,
+              "error": "Falhar ao conectar!",
+              "path": "/transferencia",
+              "errors": [
+                  {
+                      "fieldName": "Ocorreu uma falha ao conectar com a API externa",
+                      "message": "Conexão recusada - A Transação foi processada. Em breve quando o BASEN estiver disponível, receberá o registro."
+                  }
+              ]
+          }
+  
+    (application/json)
+
+<hr/>
+
+  <p>Para provocar a falha 429, você pode usar alguma ferramenta de alta simulação de requisições. Da mesma forma será enviado um SNS para as falhas do Basen. E armazenado no SQS:</p>
+
+  POST - Falhar ao conectar - Basen!
+
+  http://localhost:8080/transferencia
+
+  + Request (application/json)
+
+    + Body
+
+              {
+                "idCliente": "2ceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
+                "valor": 300.00,
+                "conta": {
+                    "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
+                    "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
+                }
+            }
+
+    + Response 429:
+      
+            {
+              "timestamp": "2024-05-27T19:56:30.871882738Z",
+              "status": 429,
+              "error": "Falhar ao conectar!",
+              "path": "/transferencia",
+              "errors": [
+                  {
+                      "fieldName": "Ocorreu uma falha ao conectar com a API externa",
+                      "message": "Conexão recusada - A Transação foi processada. Em breve quando o BASEN estiver disponível, receberá o registro."
+                  }
+              ]
+          }
+  
+    (application/json)
+ </details>
 
 ## Desafio de Arquitetura
   
