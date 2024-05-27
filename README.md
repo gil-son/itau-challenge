@@ -7,7 +7,42 @@
 ## Projeto
 
   <details>
-    <summary>Escolhas de desenvolvimento</summary>
+    <summary><h3>Escolhas de desenvolvimento</h3></summary>
+      <p>Dentro do fluxo a seguir, existe o tratamento e resiliência onde envolve a utilização de SNS (FIFO) e SQS (FIFO) para capturar as falhas de transferência ocorridas durante as etapas de acesso na API de Cadastro ou API de Contas. 
+      Também existe a utilização de um segundo SNS (FIFO) e SQS (FIFO) que armazenam transferências validadas e com o processo de desconto de saldo calculado, mas que ainda não foram registradas na API do Bacen, por alguma indisponibilidade da mesma.</p>
+<p>Caso não crie os recursos citados, apenas não poderá ver os dados armazenados nos recursos na AWS, mas a experiência utilizando a API de Transferências será a mesma:</p>
+<ol>
+    <li> A API de Transferência (Spring Boot) verifica a existência de um cliente acessando a API de Cadastro. Caso o cliente exista, passa para a etapa seguinte (2).
+        <ul>
+            <li>1.1. Caso a API de Cadastro não possa ser acessada por estar fora, os dados de transferência serão encaminhados via SNS (FIFO) para um tópico, onde uma fila SQS (FIFO) armazenará essa transferência para ser reprocessada quando a API de Cadastro estiver disponível. A API de Transferência informará que não foi possível prosseguir com a transferência, mas que retomará em breve.</li>
+            <li>1.2. Caso o cliente não exista, a API de Transferência interrompe o processo e informa que o cliente não existe.</li>
+        </ul>
+    </li>
+    <li> A API de Contas é acessada passando os dados de origem da conta. Se bem-sucedida, passa para a etapa seguinte (3).
+        <ul>
+            <li>2.1. Caso a API de Contas não possa ser acessada por estar fora, os dados de transferência serão encaminhados via SNS (FIFO) para um tópico, onde uma fila SQS (FIFO) armazenará essa transferência para ser reprocessada quando a API de Contas estiver disponível. A API de Transferência informará que não foi possível prosseguir com a transferência, mas que retomará em breve.</li>
+            <li>2.2. Se a conta não for ativa, o processo é interrompido e uma mensagem é retornada informando que a conta não está ativa.</li>
+        </ul>
+    </li>
+    <li> É verificado se a conta possui saldo suficiente para a transferência. Caso sim, é direcionado para a validação seguinte (4).
+        <ul>
+            <li>3.1. Se a conta não tiver saldo suficiente para a transferência, o processo é interrompido e uma mensagem é retornada informando a ausência de saldo suficiente.</li>
+        </ul>
+    </li>
+    <li> É verificado o limite diário da conta. Caso seja maior que zero e maior que o valor da transferência, seguirá para a etapa de cálculo (5).
+        <ul>
+            <li>4.1. Caso o valor seja acima do limite diário, a aplicação interromperá o processo informando o cliente.</li>
+        </ul>
+    </li>
+    <li> O cálculo de transferência é feito e o Bacen é notificado.
+        <ul>
+            <li>5.1. Caso a API do Bacen não possa ser acessada por estar fora, os dados de transferência serão encaminhados via SNS (FIFO) para um tópico exclusivo de falhas do Bacen, onde uma fila SQS (FIFO) armazenará transferências completas, mas que na etapa final tiveram algum problema. Assim, posteriormente, poderão ser utilizadas a partir do fluxo final. E a API de Transferência informará que não foi possível prosseguir com a transferência, mas que retomará em breve.</li>
+           <li>5.2. Caso a API do Bacen não possa ser acessada por excesso de requisições, os dados de transferência serão encaminhados via SNS (FIFO) para um tópico exclusivo de falhas do Bacen, onde uma fila SQS (FIFO) armazenará transferências completas, mas que na etapa final tiveram algum problema. Assim, posteriormente, poderão ser utilizadas a partir do fluxo final. E a API de Transferência informará que não foi possível prosseguir com a transferência, mas que retomará em breve, com o diferencial que apresentará o status 429.</li>
+        </ul>
+    </li>
+    <li> A base da API de Transferência faz um registro como prova da sua persistência de dados. E, responde o cliente passando um comprovante (id de transferência) da conclusão do processo de transferência</li>
+</ul>
+
     
   </details>
   <details>
