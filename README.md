@@ -46,7 +46,13 @@
     
   </details>
   <details>
-    <summary>Diagrama da resolução</summary>
+    <summary><h3>Diagrama da resolução</h3></summary>
+      <p>Abaixo, é possível ver o diagrama descrito em <b>Escolhas de desenvolvimento:</b></p>
+      <div align="center">
+        <img src="https://thumbs2.imgbox.com/b9/51/wICRN9lu_t.png">
+      </div>
+      <p>Caso deseje, é possível obter o arquivo do diagrama acessando <a href="https://github.com/gil-son/itau-challenge/tree/main/utils">aqui</a> (fluxo-aplicacao.drawio).</p>
+      <p>(Visualize o diagrama utilizando a ferramenta <a href="https://draw.io">draw.io</a>)</p>
     
   </details>
   <details>
@@ -122,7 +128,7 @@
       <div align="center">
         <img src="https://thumbs2.imgbox.com/b2/d7/Ma9HCam1_t.png">
       </div>
-      <p>Caso deseje, é possível obter o arquivo do diagrama acessando <a href="https://github.com/gil-son/itau-challenge/tree/main/utils">aqui</a>.</p>
+      <p>Caso deseje, é possível obter o arquivo do diagrama acessando <a href="https://github.com/gil-son/itau-challenge/tree/main/utils">aqui</a>. (fluxo-completo.drawio)</p>
       <p>(Visualize o diagrama utilizando a ferramenta <a href="https://draw.io">draw.io</a>)</p>
 
   </details>  
