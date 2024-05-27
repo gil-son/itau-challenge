@@ -4,7 +4,7 @@
   <div align="center">
         <img src="https://cdn-icons-png.flaticon.com/512/10157/10157974.png" width="10%">
     </div> 
-Esse projeto atende o desafio do Itaú, por questões internas, não posso oferecer detalahes do desafio. Mas segue a documentação para os avaliadores.
+Esse projeto atende o desafio do Itaú, por questões internas, não posso oferecer detalhes do desafio. Mas segue a documentação para os avaliadores.
 
 ## Projeto 
   <div align="center">
@@ -258,7 +258,7 @@ ARN_FROM_SNS_BASEN= valor
               "conta": {
                   "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
                   "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
-                    }
+              }
             }
 
     + Response 201:
@@ -285,7 +285,7 @@ ARN_FROM_SNS_BASEN= valor
               "conta": {
                   "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
                   "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
-                    }
+              }
             }
 
     + Response 500:
@@ -316,12 +316,12 @@ ARN_FROM_SNS_BASEN= valor
     + Body
 
             {
-            "idCliente": "bcdd1048-a501-4608-bc82-66d7b4db3600",
-            "valor": 1000.00,
-            "conta": {
-                "idOrigem": "x0d32142-74b7-4aca-9c68-838aeacef96b",
-                "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
-              }
+              "idCliente": "bcdd1048-a501-4608-bc82-66d7b4db3600",
+              "valor": 1000.00,
+              "conta": {
+                  "idOrigem": "x0d32142-74b7-4aca-9c68-838aeacef96b",
+                  "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
+                }
            }
 
     + Response 500:
@@ -352,9 +352,9 @@ ARN_FROM_SNS_BASEN= valor
     + Body
 
             {
-          "idCliente": "2ceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
-          "valor": 1000.00,
-          "conta": {
+            "idCliente": "2ceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
+            "valor": 1000.00,
+            "conta": {
               "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
               "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
             }
@@ -427,13 +427,13 @@ ARN_FROM_SNS_BASEN= valor
     + Body
 
                {
-              "idCliente": "xceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
-              "valor": 1000.00,
-              "conta": {
+                "idCliente": "xceb26e9-7b5c-417e-bf75-ffaa66e3a76f",
+                "valor": 1000.00,
+                "conta": {
                   "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
                   "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
-            }
-          }
+                }
+              }
 
     + Response 500:
       
@@ -471,7 +471,7 @@ ARN_FROM_SNS_BASEN= valor
                     "idOrigem": "d0d32142-74b7-4aca-9c68-838aeacef96b",
                     "idDestino": "41313d7b-bd75-4c75-9dea-1f4be434007f"
                 }
-            }
+              }
 
     + Response 500:
       
