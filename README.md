@@ -55,14 +55,184 @@
       <p>(Visualize o diagrama utilizando a ferramenta <a href="https://draw.io">draw.io</a>)</p>
     
   </details>
-  <details>
-    <summary>Tecnologias</summary>
-    
+
+   <details>
+    <summary><h3>Instruções de configurações</h3></summary>
+
+   <details>
+    <summary><h4>Passo 1: Preparação do Ambiente - AWS</h4> </summary>   
+    <p>Caso você deseje ver o funcionamento do SNS e do SQS, é bacana ter essas configurações. Caso não, o projeto vai funcionar da mesma forma. Bom acesse a AWS:</p>
+    <ol>
+      <li>Dentro do contexto do projeto, é necessário a criação de um usuário para acessar os recursos da AWS. Caso não tenha uma conta na AWS, crie uma conta e configure um usuário administrativo e o modo de acesso 2FA. Veja o vídeo para mais detalhes: <a href="https://www.youtube.com/watch?v=7hcxNAwfhhw">assistir</a> </li>
+      <li>Acesse o IAM - > Users -> Create user e escolha um nome</li>
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/4d/c0/VryvtGkl_t.png">
+        </div>
+      <li>É necessário dar algumas permissões ao usuário, então escolha Attach policies directly</li>
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/1f/31/Umap4ZMI_t.png">
+        </div>
+      <li>
+        Esolha as permissões de 'AmazonSNSFullAccess' e 'AmazonSQSFullAccess' e confirme
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/04/10/1cFNB03z_t.png">
+        </div>
+      </li>
+      <li>
+        Em seguida acesse a guia 'Security credential' e cliquei em 'Create access key' para obter as crendenciais de acesso que vão ser utilizadas no projeto
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/d0/17/Mafz8yHC_t.png">
+        </div>
+      </li>
+      <li>
+        Em seguida selecione a opção para poder utilizar o AWS CLI
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/c6/d9/BKJonRho_t.png">
+        </div>
+      </li>
+      <li>
+        Defina um nome para as chaves e crie
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/e1/38/6MU6imf7_t.png">
+        </div>
+      </li>
+      <li>
+        Após a criação, guarde bem as chaves ou faça o download. Não será possível voltar nessa tela
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/21/b9/W4Gaxhvx_t.png">
+        </div>
+      </li>
+      <li>
+        Agora, vamos criar o SQS que será a fila para armazenar os erros, pequise por SQS e clique no botão para criar
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/47/be/371vXrxu_t.png">
+        </div>
+      </li>
+      <li>
+        Escolha a opção FIFO (First In First Out) para que o primeiro dado a entrar seja o primeiro a sair da fila. O nome precisa terminar com .fifo
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/82/36/NQPXYQXH_t.png">
+        </div>
+      </li>
+      <li>
+        Agora vamos criar o tópico do SNS que vai encaminhar as mensagens para a fila. Pesquise por SNS e clique em Topics
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/d6/0d/slaNwD7X_t.png">
+        </div>
+      </li>
+      <li>
+        Escolha a opção FIFO, para que o primeiro dado a entrar, seja o primeiro dado a sair. O nome precisa terminar com .fifo
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/f2/0b/YBZNPDpB_t.png">
+        </div>
+      </li>
+      <li>
+        Agora, é necssário criar a assinatura desse tópico, então clique na opção de criar
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/fe/0e/l6zN2Dg8_t.png">
+        </div>
+      </li>
+      <li>
+        Escolha a opção 'Amazon SQS e em Endpoint seleciono o arn do SQS
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/bd/db/lTiLrO3C_t.png">
+        </div>
+      </li>
+      <li>
+        Acesso de novo o SQS para vincular o SQS com o SNS via police. Clique na guia 'Access policy' e clique na opção de editar
+        <div align="center">
+          <img src="https://thumbs2.imgbox.com/94/4c/n6OhCDoZ_t.png">
+        </div>
+      </li>
+      <li>
+        Edite a police conforme o script abaixo, lembresse de mudar os parâmetros conforme a sua conta:
+        
+      ```
+      {
+        "Version": "2012-10-17",
+        "Id": "__default_policy_ID",
+        "Statement": [
+          {
+            "Sid": "__owner_statement",
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": "arn:aws:iam::{id-conta-aws}:root"
+            },
+            "Action": "SQS:*",
+            "Resource": "arn:aws:sqs:us-east-1:{id-conta-aws}:{nome-sqs}.fifo"
+          },
+          {
+            "Sid": "topic-subscription-arn:aws:sns:us-east-1:{id-conta-aws}:{nome-sns}.fifo",
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": "*"
+            },
+            "Action": "SQS:SendMessage",
+            "Resource": "arn:aws:sqs:us-east-1:{id-conta-aws}:{nome-sqs}.fifo",
+            "Condition": {
+              "ArnLike": {
+                "aws:SourceArn": "arn:aws:sns:us-east-1:{id-conta-aws}:{nome-sns}.fifo"
+              }
+            }
+          }
+        ]
+      }
+      ```
+      
+  </li>
+  <li>Repita o processo para criar outro SNS (FIFO) e outro SQS (FIFO), que será exclusivo para as falhas do Basen. </li>
+</ol>
   </details>
+  
   <details>
-    <summary>Configurações</summary>
+    <summary><h4>Passo 2: Preparação do Ambiente - IDE</h4></summary>
+      <p>Clone o repositório do projeto para sua máquina local usando o Git:</p> 
+     
+```
+git clone https://github.com/gil-son/itau-challenge.git
+cd  itau-challenge
+```
+
+  <p>Acesse a sua IDE de preferência</p>
+  <ol>
+    <li>Selecione o Java na versão 17</li>
+    <li>Maven na versão 3.9 ou mais</li>
+    <li>Aguarde a IDE atualizar</li>
+    <li>Excecute o comando:</li>
     
+```
+mvn clean install
+```
+  <li>acesse na sua IDE o local para configurar as variáveis de ambiente e conigure as seguintes variáveis que se encontro no application.properties
+
+```
+ARN_FROM_SNS_TRANSFERENCIA= valor;
+AWS_ACCESS_KEY_ID= valor;
+AWS_ACCESS_SECRET_ID= valor;
+AWS_REGION= valor;
+ARN_FROM_SNS_TRANSFERENCIA= valor;
+ARN_FROM_SNS_BASEN= valor
+```
+  
+  </li>
+  <li>Agora execute o projeto para um teste rápido, mas ainda tem a etapa do docker-compose</li>
+  </ol>
   </details>
+  
+  <details>
+    <summary><h4>Passo 3: Preparação do Ambiente - Docker Compose</h4></summary>
+    <ol>
+      <li>Certifique de ter o docker em sua máquina. Caso necessário instale: <a href="https://www.youtube.com/watch?v=YimiSXPzBSs">assistir</a></li>
+      <li>Acesse o diretório /wiremock e execute o comando
+        
+```
+     cd wiremock
+     docker-compose up
+```
+  </li>
+</ol>
+  </details>
+</details>
 
 ## Desafio de Arquitetura
   
