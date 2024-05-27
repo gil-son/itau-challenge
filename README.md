@@ -1,11 +1,15 @@
 # itau-challenge
 
 ## Desafio
+  <div align="center">
+        <img src="https://cdn-icons-png.flaticon.com/512/10157/10157974.png" width="10%">
+    </div> 
+Esse projeto atende o desafio do Itaú, por questões internas, não posso oferecer detalahes do desafio. Mas segue a documentação para os avaliadores.
 
-## Sumário
-
-## Projeto
-
+## Projeto 
+  <div align="center">
+      <img src="https://cdn-icons-png.flaticon.com/512/3234/3234972.png" width="10%">
+  </div>  
   <details>
     <summary><h3>Escolhas de desenvolvimento</h3></summary>
       <p>Dentro do fluxo a seguir, existe o tratamento e resiliência onde envolve a utilização de SNS (FIFO) e SQS (FIFO) para capturar as falhas de transferência ocorridas durante as etapas de acesso na API de Cadastro ou API de Contas. 
@@ -526,7 +530,9 @@ ARN_FROM_SNS_BASEN= valor
  </details>
 
 ## Desafio de Arquitetura
-  
+  <div align="center">
+      <img src="https://cdn-icons-png.flaticon.com/512/16495/16495148.png" width="12%">
+  </div>  
   <details>
     <summary><h3>Escolhas dos recursos e resolução</h3></summary>
     <p>Antes de mostrar a solução, é bacana mostrar as divisões dos grupos:</p>
