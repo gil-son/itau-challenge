@@ -59,10 +59,11 @@ public class TransferenciaControllerTest {
         ResponseEntity<?> responseEntity = transferenciaController.realizarTransferencia(transferenciaRequestDTO);
 
         // Assert
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         TransferenciaResponseDTO responseDTO = (TransferenciaResponseDTO) responseEntity.getBody();
         assertEquals("12345", responseDTO.getId_transferencia());
     }
+
 
     @Test
     public void testRealizarTransferenciaValidacaoFalha() throws Exception {

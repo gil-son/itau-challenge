@@ -52,6 +52,6 @@ public class TransferenciaController {
         // Criar o objeto de resposta
         TransferenciaResponseDTO responseDTO = new TransferenciaResponseDTO(idTransferencia);
 
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 }
